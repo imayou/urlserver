@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短链生成</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <style>
+        .container {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .row {
+            margin: 0 auto;
+        }
+
+        .result {
+            text-align: center;
+        }
+
+        .aLink {
+            font-size: x-large;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <input type="text" class="form-control" id="url-hook" placeholder="请输入地址">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <select class="form-control" id="aging-hook">
+                    <option value="5">5m</option>
+                    <option value="10">10m</option>
+                    <option value="30">30m</option>
+                    <option value="1440">1d</option>
+                    <option value="2880">2d</option>
+                    <option value="4320">3d</option>
+                    <option value="10080">7d</option>
+                    <option value="20160">14d</option>
+                    <option value="43200">30d</option>
+                    <option value="259200">180d</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-info" id="btn-hook" type="submit"> 生 成</button>
+        </div>
+    </div>
+    <div class="row jumbotron">
+        <div class="col-md-12 result" id="result-hook">
+            <a id="link" target="_blank" class="aLink" href="">http://www.zidu.top</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#btn-hook').on('click', function () {
+            const url = $('#url-hook').val()
+            const aging = $('#aging-hook').val()
+            if (url.substr(0, 4) != "http") {
+                alert("url以http/https开头")
+                return false
+            }
+            // if (!IsURL(url)) {
+            //     alert("url格式错误")
+            //     return false
+            // }
+
+            $.post("http://www.zidu.top/url/toS", JSON.stringify({"url": url, "time": aging}), function (result) {
+                if (null != result && null != result.url) {
+                    $('#link').attr('href', result.url);
+                    $('#link').text(result.url);
+                }
+            }, "json");
+        })
+    })
+
+    function IsURL(str_url) {
+        const strRegex = '^((https|http|ftp|rtsp|mms)?://)'
+            + '?(([0-9a-z_!~*\'().&=+$%-]+: )?[0-9a-z_!~*\'().&=+$%-]+@)?' //ftp的user@
+            + '(([0-9]{1,3}.){3}[0-9]{1,3}' // IP形式的URL- 199.194.52.184
+            + '|' // 允许IP和DOMAIN（域名）
+            + '([0-9a-z_!~*\'()-]+.)*' // 域名- www.
+            + '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z].' // 二级域名
+            + '[a-z]{2,6})' // first level domain- .com or .museum
+            + '(:[0-9]{1,4})?' // 端口- :80
+            + '((/?)|' // a slash isn't required if there is no file name
+            + '(/[0-9a-z_!~*\'().;?:@&=+$,%#-]+)+/?)$';
+        const re = new RegExp(strRegex);
+        return re.test(str_url);
+    }
+</script>
+</body>
+</html>
